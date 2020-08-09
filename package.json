@@ -1,0 +1,25 @@
+{
+  "name": "monopoliredis",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/andresandrango/monopoliredis.git"
+  },
+  "author": "andres andrango",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/andresandrango/monopoliredis/issues"
+  },
+  "homepage": "https://github.com/andresandrango/monopoliredis#readme",
+  "dependencies": {
+    "async-redis": "^1.1.7",
+    "lodash": "^4.17.19",
+    "redis": "^3.0.2",
+    "redlock": "^4.1.0"
+  }
+}
