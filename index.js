@@ -3,10 +3,19 @@ const RedisService = require("./src/RedisService");
 
 async function test() {
     RedisService.getClient(async (err, client) => {
-        const key = 'a0002';
-        await gameApi.createGame(client, key);
-        console.log(await gameApi.getGame(client, key));
-        console.log(await gameApi.startGame(client, key));
+        
+        try {
+            let game = await gameApi.createGame(client);
+            console.log('create game', game);
+            const key = game.key;
+            console.log('test getting game', await gameApi.getGame(client, key));
+            console.log("add player", await gameApi.addPlayer(client, key, "andres"))
+            console.log("add player", await gameApi.addPlayer(client, key, "alex"))
+            console.log('start game', await gameApi.startGame(client, key));
+        } catch(e) {
+            console.log('ERROR FOUND', e);
+        }
+        
     })
     
 
@@ -15,4 +24,3 @@ async function test() {
 }
 
 test();
-

@@ -1,8 +1,8 @@
-export const PLAYER_MODEL = {
+const PLAYER_MODEL = {
     key: '',
     name: '',
     board: [],  // Sets
     hand: [],   // Cards 
 };
 
-export default PLAYER_MODEL;
+module.exports = PLAYER_MODEL;

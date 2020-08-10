@@ -17,7 +17,7 @@ async function createGame(client) {
     try {
         await client.lock(gameKey);
         if (!await client.setnx(gameKey, JSON.stringify(game))) {
-            throw Error("Unable to set a new game, maybe try a different key");
+            throw new Error("Unable to set a new game, maybe try a different key");
         }
     } catch (e) {
         throw e;
@@ -31,7 +31,7 @@ exports.createGame = createGame;
 
 async function getGame(client, gameKey, playerKey) {
     const rawGame = await client.get(gameKey);
-    if (!rawGame) throw Error(`Cannot start non existing game ${gameKey}`);
+    if (!rawGame) throw new Error(`Cannot start non existing game ${gameKey}`);
 
     const game = JSON.parse(rawGame);
 
@@ -43,7 +43,7 @@ async function getGame(client, gameKey, playerKey) {
     if (playerKey) {
         const player = _.find(players, {key: playerKey});
         if (!player) {
-            throw Error(`Player ${playerKey} does not belong to this game ${gameKey}`);
+            throw new Error(`Player ${playerKey} does not belong to this game ${gameKey}`);
         }
 
         game.players.push(player);
@@ -61,21 +61,21 @@ exports.getGame = getGame;
  */
 async function startGame(client, gameKey) {
     function validationFn(game) {
-        if (game.state == "STARTED") {
-            await client.unlock(gameKey); // TODO Do I need this line?
-            return game;    
-        }
-
         if (game.state != "OPEN") {
-            throw Error(`Game ${gameKey} is not OPEN`);
+            throw new Error(`Game ${gameKey} is not OPEN`);
         }
 
         if (game.players.length < 2) {
-            throw Error(`Game ${gameKey} does not have enough players to start`);
+            throw new Error(`Game ${gameKey} does not have enough players to start`);
         }
     }
 
     function transformationFn(game) {
+        if (game.state == "STARTED") {
+            // if game is already started, don't do anything
+            return game;    
+        }
+
         game.state = "STARTED";
 
         // Create new shuffled deck
@@ -109,10 +109,10 @@ exports.endGame = endGame;
 async function addPlayer(client, gameKey, playerName) {
     function validationFn(game) {
         if (game.players.length >= 5) {
-            throw Error(`Game ${gameKey} has enough players`);
+            throw new Error(`Game ${gameKey} has enough players`);
         }
         if (game.state != "OPEN") {
-            throw Error(`Game ${gameKey} does no longer accept new players`);
+            throw new Error(`Game ${gameKey} does no longer accept new players`);
         }
     }
 
@@ -138,10 +138,10 @@ exports.addPlayer = addPlayer;
 async function shuffle(client, gameKey) {
     function validationFn(game) {
         if (game.state != "STARTED") {
-            throw Error(`Game ${gameKey} is not started`);
+            throw new Error(`Game ${gameKey} is not started`);
         }
         if (game.deck.length != 0) {
-            throw Error(`Deck in game ${gameKey} is not empty`);
+            throw new Error(`Deck in game ${gameKey} is not empty`);
         }
     }
 
@@ -159,7 +159,7 @@ exports.shuffle = shuffle;
 async function setNextPlayer(client, gameKey) {
     function validationFn(game) {
         if (game.state != "STARTED") {
-            throw Error(`Game ${gameKey} is not started`);
+            throw new Error(`Game ${gameKey} is not started`);
         }
     }
 

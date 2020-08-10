@@ -1,6 +1,6 @@
-export const CARD_MODEL = {
+const CARD_MODEL = {
     id: '',
     isRotated: false
 };
 
-export default CARD_MODEL;
+module.exports = CARD_MODEL;

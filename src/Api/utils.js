@@ -12,7 +12,7 @@ async function editGame(client, gameKey, validationFn, transformationFn) {
         await client.lock(gameKey);
 
         const rawGame = await client.get(gameKey);
-        if (!rawGame) throw Error(`Game does not exist ${gameKey}`);
+        if (!rawGame) throw new Error(`Game does not exist ${gameKey}`);
         
         game = JSON.parse(rawGame);
         
@@ -21,9 +21,10 @@ async function editGame(client, gameKey, validationFn, transformationFn) {
         game = transformationFn(game);
 
         if (!await client.set(gameKey, JSON.stringify(game))) {
-            throw Error("Unable to update game");
+            throw new Error("Unable to update game");
         }
     } catch (e) {
+        console.log('edit game failed', e);
         throw e;
     } finally {
         await client.unlock(gameKey);
@@ -38,7 +39,7 @@ function reshuffle(cards) {
   }
 
 function dealCards(game, player, nCards) {
-    if (game.deck.length < nCards) throw Error(`game ${game.key} deck does not have enough cards`);
+    if (game.deck.length < nCards) throw new Error(`game ${game.key} deck does not have enough cards`);
 
     for (let i = 0; i < nCards; i++) {
         const card = game.deck.pop();

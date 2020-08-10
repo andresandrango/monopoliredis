@@ -4,9 +4,9 @@ const apiUtils = require('./utils');
 
 export async function dealCard(client, gameKey, playerKey) {
     function validationFn(game) {
-        if (game.state != "STARTED") throw Error(`game ${gameKey} is not STARTED`);
-        if (game.activePlayer != playerKey) throw Error(`player ${playerKey} is not the active player in game ${gameKey}`);
-        if (game.deck.length == 0) throw Error(`game ${gameKey} deck is empty`); 
+        if (game.state != "STARTED") throw new Error(`game ${gameKey} is not STARTED`);
+        if (game.activePlayer != playerKey) throw new Error(`player ${playerKey} is not the active player in game ${gameKey}`);
+        if (game.deck.length == 0) throw new Error(`game ${gameKey} deck is empty`); 
     }
 
     function transformFn(game) {
@@ -22,13 +22,13 @@ exports.dealCard = dealCard;
 
 export async function playCardAsAction(client, gameKey, playerKey, cardId) {
     function validationFn(game) {
-        if (game.state != "STARTED") throw Error(`game ${gameKey} is not STARTED`);
+        if (game.state != "STARTED") throw new Error(`game ${gameKey} is not STARTED`);
 
         // TODO Revisit this, however for now, you can play a card as an action even if you're not the active player e.g. say no card
-        // if (game.activePlayer != playerKey) throw Error(`player ${playerKey} is not the active player in game ${gameKey}`);
+        // if (game.activePlayer != playerKey) throw new Error(`player ${playerKey} is not the active player in game ${gameKey}`);
         
         const player = _.find(game.players, {key: game.activePlayer});
-        if (!apiUtils.isCardInPlayerHand(player, cardId)) throw Error(`player ${playerKey} does not own card ${cardId} in hand`);
+        if (!apiUtils.isCardInPlayerHand(player, cardId)) throw new Error(`player ${playerKey} does not own card ${cardId} in hand`);
     }
 
     function transformFn(game) {
@@ -48,11 +48,11 @@ exports.playCardAsAction = playCardAsAction;
 
 export async function playCard(client, gameKey, playerKey, cardId, toSetId = null, positionInSet = null) {
     function validationFn(game) {
-        if (game.state != "STARTED") throw Error(`game ${gameKey} is not STARTED`);
-        if (game.activePlayer != playerKey) throw Error(`player ${playerKey} is not the active player in game ${gameKey}`);
+        if (game.state != "STARTED") throw new Error(`game ${gameKey} is not STARTED`);
+        if (game.activePlayer != playerKey) throw new Error(`player ${playerKey} is not the active player in game ${gameKey}`);
         
         const activePlayer = _.find(game.players, {key: game.activePlayer});
-        if (!apiUtils.isCardInPlayerHand(activePlayer, cardId)) throw Error(`active player ${playerKey} does not own card ${cardId} in hand`);
+        if (!apiUtils.isCardInPlayerHand(activePlayer, cardId)) throw new Error(`active player ${playerKey} does not own card ${cardId} in hand`);
     }
 
     function transformFn(game) {
@@ -73,12 +73,12 @@ exports.playCard = playCard;
 // Moves only public/board cards
 export async function moveCard(client, gameKey, playerKey, fromPlayerKey, toPlayerKey, cardId, toSetId = null, positionInSet = null) {
     function validationFn(game) {
-        if (game.state != "STARTED") throw Error(`game ${gameKey} is not STARTED`);
-        if (game.activePlayer != playerKey) throw Error(`player ${playerKey} is not the active player in game ${gameKey}`);
-        if (fromPlayerKey != playerKey && toPlayerKey != playerKey) throw Error(`player ${playerKey} is neither to/from player`);
+        if (game.state != "STARTED") throw new Error(`game ${gameKey} is not STARTED`);
+        if (game.activePlayer != playerKey) throw new Error(`player ${playerKey} is not the active player in game ${gameKey}`);
+        if (fromPlayerKey != playerKey && toPlayerKey != playerKey) throw new Error(`player ${playerKey} is neither to/from player`);
 
         const fromPlayer = _.find(game.players, {key: fromPlayerKey});
-        if (!apiUtils.isCardInPlayerBoard(fromPlayer, cardId)) throw Error(`card ${cardId} not in player ${fromPlayer} board`);
+        if (!apiUtils.isCardInPlayerBoard(fromPlayer, cardId)) throw new Error(`card ${cardId} not in player ${fromPlayer} board`);
     }
 
     function transformFn(game) {
@@ -94,13 +94,13 @@ exports.moveCard = moveCard;
 
 export async function moveSet(client, gameKey, playerKey, fromPlayerKey, toPlayerKey, setId, positionInBoard = null) {
     function validationFn(game) {
-        if (game.state != "STARTED") throw Error(`game ${gameKey} is not STARTED`);
-        if (game.activePlayer != playerKey) throw Error(`player ${playerKey} is not the active player in game ${gameKey}`);
-        if (fromPlayerKey != playerKey && toPlayerKey != playerKey) throw Error(`player ${playerKey} is neither to/from player`);
+        if (game.state != "STARTED") throw new Error(`game ${gameKey} is not STARTED`);
+        if (game.activePlayer != playerKey) throw new Error(`player ${playerKey} is not the active player in game ${gameKey}`);
+        if (fromPlayerKey != playerKey && toPlayerKey != playerKey) throw new Error(`player ${playerKey} is neither to/from player`);
 
         const fromPlayer = _.find(game.players, {key: fromPlayerKey});
         const cardSet = _.find(fromPlayer.board, {id: setId});
-        if (!cardSet) throw Error(`No cardset ${setId} in player ${fromPlayerKey} board`);
+        if (!cardSet) throw new Error(`No cardset ${setId} in player ${fromPlayerKey} board`);
     }
 
     function transformFn(game) {

@@ -1,6 +1,6 @@
-export const CARDSET_MODEL = {
+const CARDSET_MODEL = {
     id: '',
     cards: [] // Cards
 };
 
-export default CARDSET_MODEL;
+module.exports = CARDSET_MODEL;
