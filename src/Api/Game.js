@@ -61,7 +61,7 @@ exports.getGame = getGame;
  */
 async function startGame(client, gameKey) {
     function validationFn(game) {
-        if (game.state != "OPEN") {
+        if (game.state != "STARTED" && game.state != "OPEN") {
             throw new Error(`Game ${gameKey} is not OPEN`);
         }
 
@@ -116,16 +116,19 @@ async function addPlayer(client, gameKey, playerName) {
         }
     }
 
+    let newPlayer;
     // Create and append new player to game
     function transformationFn(game) {
-        const newPlayer = _.cloneDeep(PLAYER_MODEL);
+        newPlayer = _.cloneDeep(PLAYER_MODEL);
         newPlayer.key = _.uniqueId("player_");
         newPlayer.name = playerName;
         game.players.push(newPlayer);
         return game;
     }
 
-    return await apiUtils.editGame(client, gameKey, validationFn, transformationFn);
+    await apiUtils.editGame(client, gameKey, validationFn, transformationFn);
+
+    return newPlayer;
 }
 exports.addPlayer = addPlayer;
 

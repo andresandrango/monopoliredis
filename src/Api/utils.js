@@ -2,7 +2,7 @@ const _ = require("lodash");
 const CARD_MODEL = require('./../Model/Card');
 const CARDSET_MODEL = require('./../Model/CardSet');
 
-async function editGame(client, gameKey, validationFn, transformationFn) {
+async function editGame(client, gameKey, validationFn, transformationFn, playersAnonymizationFn = () => []) {
     if (await client.isLocked(gameKey)) {
         throw new Error(`game key ${gameKey} is locked!`);
     }
@@ -29,6 +29,11 @@ async function editGame(client, gameKey, validationFn, transformationFn) {
     } finally {
         await client.unlock(gameKey);
     }
+
+    game.deck = []; // remove deck
+
+    // Remove players as default
+    game.players = playersAnonymizationFn(game.players);
 
     return game;
 }
